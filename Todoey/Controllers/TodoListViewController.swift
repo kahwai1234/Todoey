@@ -12,35 +12,39 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray=[Item]() //array of "item" object
+     let dataFilePath=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
     
     
-    
-    let defaults=UserDefaults.standard
+   // let defaults=UserDefaults.standard    deleting this code to create own plist using encoder
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
        print("Viewdidload")
-        let newItem=Item()
-        newItem.title="Find Mike"
-        itemArray.append(newItem)
         
-        let newItem1=Item()
-        newItem1.title="Buy egg"
-        itemArray.append(newItem1)
+       
+        print(dataFilePath)
+        loadItem()
+//        let newItem=Item()
+//        newItem.title="Find Mike"
+//        itemArray.append(newItem)
+//
+//        let newItem1=Item()
+//        newItem1.title="Buy egg"
+//        itemArray.append(newItem1)
+//
+//        let newItem3=Item()
+//        newItem3.title="Buy egg"
+//        itemArray.append(newItem3)
+//
+//        let newItem4=Item()
+//        newItem4.title="Buy egg"
+//        itemArray.append(newItem4)
+//
         
-        let newItem3=Item()
-        newItem3.title="Buy egg"
-        itemArray.append(newItem3)
-        
-        let newItem4=Item()
-        newItem4.title="Buy egg"
-        itemArray.append(newItem4)
-        
-        
-        if let items=defaults.array(forKey: "TodoListArray") as? [Item] {//extract plist on local drive
-            itemArray=items
-        }
+//        if let items=defaults.array(forKey: "TodoListArray") as? [Item] {//extract plist on local drive
+//            itemArray=items
+//        }
         
     }
     
@@ -82,7 +86,7 @@ class TodoListViewController: UITableViewController {
         print("didselectrow")
         
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done // using not operator to reverse the command below
-        
+        saveItem()
 //        if itemArray[indexPath.row].done==false{
 //            itemArray[indexPath.row].done=true
 //        }else{
@@ -97,7 +101,7 @@ class TodoListViewController: UITableViewController {
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
 //        }
 //
-        tableView.reloadData()  //call the tableviewdatasource method , will reload the tableview by no of itemarray
+        //tableView.reloadData()  //call the tableviewdatasource method , will reload the tableview by no of itemarray
         tableView.deselectRow(at: indexPath, animated: true)// deselect the row after turning grey and toggle back to white
     
     }
@@ -120,11 +124,10 @@ class TodoListViewController: UITableViewController {
             
             self.itemArray.append(newItem)
             
+            self.saveItem()
           //  self.itemArray.append(textField.text!)
             
-            self.defaults.set(self.itemArray, forKey: "TodoListArray")// forKey defaults database key into plist in local drive
-            
-            self.tableView.reloadData()
+           
         }
         
         
@@ -141,4 +144,40 @@ class TodoListViewController: UITableViewController {
     
     
 }
+    
+    //MARK -MODEL MANIPULATION METHOD
+    func saveItem(){
+        let encoder=PropertyListEncoder()
+        
+        do {
+            let data=try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+            
+        }catch{
+            print("Error encoding itemarray, \(error)")
+        }
+        
+        
+        
+        // self.defaults.set(self.itemArray, forKey: "TodoListArray")// forKey defaults database key into plist in local drive
+        
+        self.tableView.reloadData()
+        
+    }
+    
+    func loadItem(){
+        if let data=try? Data(contentsOf: dataFilePath!){
+            let decoder=PropertyListDecoder()
+            do{
+                itemArray=try decoder.decode([Item].self, from: data)
+            }catch{
+                print("Error decoding itemarray, \(error)")
+            }
+            
+        }
+        
+    }
+    
 }
+
+
