@@ -38,11 +38,12 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
         let action=UIAlertAction(title: "Add Category", style: .default) { (action) in
             //what will happen when user pressed add item button
             //print(textField.text)
-            
+        
             let newCategory=Category(context: self.context) //initialize DS manage object
             
             newCategory.name=textField.text!
             
+        
             
             
 //            newItem.title=textField.text!
@@ -144,7 +145,6 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
         }catch{
             print("Error saving context, \(error)")
         }
-        
         
         
         // self.defaults.set(self.itemArray, forKey: "TodoListArray")// forKey defaults database key into plist in local drive

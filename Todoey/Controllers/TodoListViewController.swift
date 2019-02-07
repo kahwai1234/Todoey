@@ -66,8 +66,11 @@ class TodoListViewController: UITableViewController{
         let cell=tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         tableView.separatorColor=UIColor.brown
        // tableView.backgroundColor=UIColor.purple
-        let item=itemArray[indexPath.row]
-        cell.textLabel?.text=item.title
+        
+        let item=itemArray[indexPath.row]  //assign NS manageobject at index 0,1,....n
+        cell.textLabel?.text=item.title  // accesssing the properties using .title
+        
+        
         
         //checking the mark such that when u scroll down reflect the checkmark and wont repeat
         //using ternary operator to shorten the below true false statement
@@ -96,7 +99,7 @@ class TodoListViewController: UITableViewController{
         //let cell=tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
         //let item=itemArray[indexPath.row]
-        print(indexPath.row)
+    
         if editingStyle == .delete{
                   context.delete(itemArray[indexPath.row])
             
@@ -161,8 +164,9 @@ class TodoListViewController: UITableViewController{
             //print(textField.text)
             
             let newItem=Item(context: self.context) //initialize DS manage object
-        
             
+            //delaring temp item as to store new item before append to itemArray
+        
             newItem.title=textField.text!
             newItem.done=false
             newItem.parentCategory=self.selectedCategory  //assign selected category to parent category
