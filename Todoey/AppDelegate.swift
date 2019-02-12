@@ -20,6 +20,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
        // print("didfinishlauchingwithoptions")
      //   print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+       print(Realm.Configuration.defaultConfiguration.fileURL)
+//        let data=Data()
+//        data.age=12
+//        data.name="YenYeung"
+//
+        
+        
+        do{
+            let realm=try Realm()
+
+        }catch{
+            print("Error in catching ,\(error)")
+        }
+//
         
         return true
     }

@@ -7,13 +7,12 @@
 //
 
 import UIKit
-import CoreData
-
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-var CategoryArray=[Category]()
-let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext  //grab the persistent container context for CRUD
+let realm=try! Realm() //use realm
+var Categories:Results<Category>?  //container declaration for realm
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,7 +38,7 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
             //what will happen when user pressed add item button
             //print(textField.text)
         
-            let newCategory=Category(context: self.context) //initialize DS manage object
+            let newCategory=Category() //initialize object
             
             newCategory.name=textField.text!
             
@@ -49,9 +48,9 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
 //            newItem.title=textField.text!
 //            newItem.done=false
 //
-            self.CategoryArray.append(newCategory)
+           // self.CategoryArray.append(newCategory) autoupdate container for realm
             
-            self.saveCategory()
+            self.saveCategory(category: newCategory)
             
             
         }
@@ -74,9 +73,9 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
         let cell=tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         print("Categorycellforrow")
         
-        let category=CategoryArray[indexPath.row]
+        let category=Categories?[indexPath.row]  //assign result container property
         
-        cell.textLabel?.text=category.name
+        cell.textLabel?.text=category?.name ?? "No category added yet"
         
         //checking the mark such that when u scroll down reflect the checkmark and wont repeat
         //using ternary operator to shorten the below true false statement
@@ -98,7 +97,8 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("count array")
-        return CategoryArray.count  // feedback to indexpath row to let it call how many times
+        return Categories?.count ?? 1  // feedback to indexpath row to let it call how many times
+        // categories is optional if nil will return 1
     }
         
 
@@ -131,16 +131,18 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
         
         if let indexPath=tableView.indexPathForSelectedRow{
             print("AssignselectedCategory TO todolisteVC")
-            destinationVC.selectedCategory=CategoryArray[indexPath.row]
+            destinationVC.selectedCategory=Categories?[indexPath.row]
         }
     }
     
     
     //MARK-Data manipulation method
-    func saveCategory(){
+    func saveCategory(category:Category){
         print("Save item")
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
             
         }catch{
             print("Error saving context, \(error)")
@@ -153,17 +155,12 @@ let context=(UIApplication.shared.delegate as! AppDelegate).persistentContainer.
         
     }
     
-    func loadCategory(with request : NSFetchRequest<Category>=Category.fetchRequest()){   //loaditem(external internal)
+    func loadCategory(){   //loaditem(external internal)
        
-        
-        //let request:NSFetchRequest<Item>=Item.fetchRequest()
         print("Load ItemCategory")
-        do {
-            CategoryArray=try context.fetch(request)
-            
-        }catch{
-            print("Error in fetching data from context,\(error)")
-        }
+        
+        Categories=realm.objects(Category.self)
+    
         tableView.reloadData()
     }
     
