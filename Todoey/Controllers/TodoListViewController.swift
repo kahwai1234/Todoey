@@ -9,11 +9,12 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController{
+class TodoListViewController: SwipeTableViewController{
     let realm=try! Realm()
     var todoitems:Results<Item>?
     
-//    let dataFilePath=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
+    @IBOutlet weak var searchBar: UISearchBar!
+    //    let dataFilePath=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Item.plist")
     
     var selectedCategory : Category? {
         didSet{
@@ -23,15 +24,61 @@ class TodoListViewController: UITableViewController{
         }
     }
     
+    var hex:String=""
+    
    // let defaults=UserDefaults.standard    deleting this code to create own plist using encoder
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.separatorStyle = .none
+
         
         // Do any additional setup after loading the view, typically from a nib.
         print("Viewdidload")
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let colourHex=selectedCategory?.hexValue else {fatalError()}
+            title=selectedCategory?.name
+        
+        updateNavBar(withHexCode: colourHex)
+            
+        
+           
+        }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalColour=UIColor(hexString: "1D9BF6") else {
+            fatalError()}
+        updateNavBar(withHexCode: "1D9BF6")
+        
+    }
+    
+    //MARK: - Nav Bar Setup Method
+    func updateNavBar(withHexCode colourHexCode:String){
+        guard let navBar=navigationController?.navigationBar else{
+            fatalError("Navigation controller doesnt exist")
+        }
+        
+        guard let navBarColour=UIColor(hexString: colourHexCode) else {fatalError()}
+        navBar.barTintColor=navBarColour
+        navBar.tintColor=UIColor(contrastingBlackOrWhiteColorOn: navBarColour, isFlat: true)
+        
+        navBar.largeTitleTextAttributes=[NSAttributedString.Key.foregroundColor: UIColor(contrastingBlackOrWhiteColorOn: navBarColour, isFlat: true)]  //contrast the text
+        
+        searchBar.barTintColor=navBarColour
+        
+    }
+    
+        
+        
+    
+        
+            
+    
 
-        tableView.sectionIndexBackgroundColor=UIColor.gray
 
         //loadItem()
 
@@ -56,18 +103,25 @@ class TodoListViewController: UITableViewController{
 //            itemArray=items
 //        }
         
-    }
+    
     
     //MARK - TableView Datasource Method
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("cellforrow")
-        let cell=tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        tableView.separatorColor=UIColor.brown
+        print("TodoListcellforrow")
+        let cell = super.tableView(tableView, cellForRowAt: indexPath) //from superclass swipe table
+
+       // tableView.separatorColor=UIColor.brown
        // tableView.backgroundColor=UIColor.purple
-        
         if let item=todoitems?[indexPath.row]{
-            print("checked go in")
-            cell.textLabel?.text=item.title  // accesssing the properties using .title
+            cell.textLabel?.text=item.title// accesssing the properties using .title
+            
+            if let colour=UIColor(hexString: (selectedCategory?.hexValue) ?? "1D9BF6")?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat((todoitems?.count)!) ) {
+                cell.backgroundColor=colour
+                cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: colour, isFlat: true)
+            }
+
+            
+            
             cell.accessoryType = item.done ? .checkmark : .none
 //            if item.done==true{
 //                            cell.accessoryType = .checkmark
@@ -241,12 +295,31 @@ func loadItems(){
 
     tableView.reloadData()
 }
+
+    override func updateModel(at indexPath: IndexPath) {
+        
+        let item=todoitems?[indexPath.row] //assign result container property
+            
+            if let currentItem=item{  //optinal biding
+                do{
+                    try self.realm.write {
+                        self.realm.delete(currentItem)
+                    }
+                }catch{
+                    print("Error deleting category ,\(error)")
+                }
+                
+                //  tableView.reloadData()
+            }
+        }
     
     
 
     
  
 }
+
+
  //MARK -Searchbar method
 extension TodoListViewController:UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

@@ -17,6 +17,7 @@
 		EB2F80AA220953DD004B6EB2 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB2F80A9220953DD004B6EB2 /* CategoryViewController.swift */; };
 		EB6E07F1220C1B250058D89C /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6E07F0220C1B250058D89C /* Item.swift */; };
 		EB6E07F3220C1B370058D89C /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6E07F2220C1B370058D89C /* Category.swift */; };
+		EB6E07F52212F05A0058D89C /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6E07F42212F05A0058D89C /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		EB2F80A9220953DD004B6EB2 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		EB6E07F0220C1B250058D89C /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		EB6E07F2220C1B370058D89C /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		EB6E07F42212F05A0058D89C /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			children = (
 				EB2F80A9220953DD004B6EB2 /* CategoryViewController.swift */,
 				EB2F806F21FD8FD1004B6EB2 /* TodoListViewController.swift */,
+				EB6E07F42212F05A0058D89C /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 				EB6E07F1220C1B250058D89C /* Item.swift in Sources */,
 				EB2F80AA220953DD004B6EB2 /* CategoryViewController.swift in Sources */,
 				EB2F807021FD8FD1004B6EB2 /* TodoListViewController.swift in Sources */,
+				EB6E07F52212F05A0058D89C /* SwipeTableViewController.swift in Sources */,
 				EB2F80872206CE4E004B6EB2 /* DataModel.xcdatamodeld in Sources */,
 				EB2F806E21FD8FD1004B6EB2 /* AppDelegate.swift in Sources */,
 				EB6E07F3220C1B370058D89C /* Category.swift in Sources */,

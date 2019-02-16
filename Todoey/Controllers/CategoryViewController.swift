@@ -8,8 +8,10 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+
+class CategoryViewController: SwipeTableViewController  {
     
 let realm=try! Realm() //use realm
 var Categories:Results<Category>?  //container declaration for realm
@@ -18,6 +20,12 @@ var Categories:Results<Category>?  //container declaration for realm
         super.viewDidLoad()
         print("ViewdidloadCategory")
         loadCategory()
+        tableView.rowHeight=80
+        tableView.separatorStyle = .none
+        
+        
+
+
 
 
         // Uncomment the following line to preserve selection between presentations
@@ -37,13 +45,13 @@ var Categories:Results<Category>?  //container declaration for realm
         let action=UIAlertAction(title: "Add Category", style: .default) { (action) in
             //what will happen when user pressed add item button
             //print(textField.text)
+            
         
             let newCategory=Category() //initialize object
-            
+            let hex=UIColor.randomFlat.hexValue()
             newCategory.name=textField.text!
-            
-        
-            
+            newCategory.hexValue=hex
+
             
 //            newItem.title=textField.text!
 //            newItem.done=false
@@ -68,14 +76,29 @@ var Categories:Results<Category>?  //container declaration for realm
     }
     
     //MARK- tableview datasource method
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
+//        cell.delegate = self
+//        return cell
+//    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell=tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell=super.tableView(tableView, cellForRowAt: indexPath) //from superclass swipe table 
         print("Categorycellforrow")
         
-        let category=Categories?[indexPath.row]  //assign result container property
+        if let category=Categories?[indexPath.row]  {//assign value of container
         
-        cell.textLabel?.text=category?.name ?? "No category added yet"
+            cell.textLabel?.text=category.name
+        
+            guard let categoryColour=UIColor(hexString: category.hexValue) else {
+                fatalError()}
+                
+            
+        cell.backgroundColor = categoryColour
+        cell.textLabel?.textColor=UIColor(contrastingBlackOrWhiteColorOn: categoryColour, isFlat: true)
+        }
+       
+
         
         //checking the mark such that when u scroll down reflect the checkmark and wont repeat
         //using ternary operator to shorten the below true false statement
@@ -132,6 +155,7 @@ var Categories:Results<Category>?  //container declaration for realm
         if let indexPath=tableView.indexPathForSelectedRow{
             print("AssignselectedCategory TO todolisteVC")
             destinationVC.selectedCategory=Categories?[indexPath.row]
+            destinationVC.hex=(Categories?[indexPath.row].hexValue)!
         }
     }
     
@@ -164,4 +188,29 @@ var Categories:Results<Category>?  //container declaration for realm
         tableView.reloadData()
     }
     
+    
+    override func updateModel(at indexPath: IndexPath) {
+        let category=self.Categories?[indexPath.row]//assign result container property
+        
+        if let categoryForDeletion=category{  //optinal biding
+            do{
+             try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            }catch{
+                print("Error deleting category ,\(error)")
+            }
+        
+                        //  tableView.reloadData()
+            }
+    }
+    
+
+    
 }
+
+//MARK : SwipeTableViewCellDelegate
+
+
+    
+

@@ -11,6 +11,7 @@ import RealmSwift
 
 class Category: Object {
     @objc dynamic var name:String=""
+    @objc dynamic var hexValue:String=""
     let items=List<Item>()  // ==  single relationship to items
     //var array=[Item]()
     
